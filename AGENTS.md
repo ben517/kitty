@@ -4,7 +4,7 @@ This file provides guidance to Qoder (qoder.com) when working with code in this 
 
 ## Project Overview
 
-SOS Demo - a smart home appliance Q&A system using RAG + multi-Agent architecture. Users can ask questions about device status, technical parameters, operation guides, and fault codes. The system retrieves from a local knowledge base (device manuals) and optionally queries live device data via Samsung SmartThings API.
+Smart home appliance Q&A system using RAG + multi-Agent architecture. Users can ask questions about device status, technical parameters, operation guides, and fault codes. The system retrieves from a local knowledge base (device manuals) and optionally queries live device data via Samsung SmartThings API.
 
 ## Build & Run Commands
 
@@ -15,26 +15,23 @@ source venv/bin/activate
 # Install dependencies
 pip install -r requirements.txt
 
-# Start dev server (auto-reload)
+# Start dev server
 ./run.sh
 
 # Or manually:
-LD_LIBRARY_PATH=/nix/store/03h8f1wmpb86s9v8xd0lcb7jnp7nwm6l-idx-env-fhs/usr/lib:$LD_LIBRARY_PATH \
-  python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 
 # Lint
 flake8 app/
 ```
 
-**Important**: This Nix-based environment requires `LD_LIBRARY_PATH` to be set for numpy/chromadb native libs. The `run.sh` script handles this automatically.
-
 ## Configuration
 
-All settings use env vars with `SOS_` prefix, loaded via pydantic-settings from `.env`. See `.env.example` for all options.
+All settings use env vars loaded via pydantic-settings from `.env`. See `.env.example` for all options.
 
 LLM calls go through **litellm** using OpenAI-compatible format. Default config targets Alibaba DashScope (Qwen models):
-- `SOS_LLM_MODEL=openai/qwen-turbo`
-- `SOS_LLM_BASE_URL=https://dashscope.aliyuncs.com/compatible-mode/v1`
+- `LLM_MODEL=openai/qwen-turbo`
+- `LLM_BASE_URL=https://dashscope.aliyuncs.com/compatible-mode/v1`
 
 ## Architecture
 

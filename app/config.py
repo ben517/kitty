@@ -35,7 +35,7 @@ class Settings(BaseSettings):
     host: str = "0.0.0.0"
     port: int = 8000
 
-    model_config = {"env_file": ".env", "env_prefix": "SOS_"}
+    model_config = {"env_file": ".env", "env_prefix": ""}
 
 
 settings = Settings()

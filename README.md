@@ -1,56 +1,64 @@
-# SOS Demo 项目概述
+# 家电智能问答系统
 
-本项目旨在构建一个面向家用电器设备的智能问答系统，通过集成本地 RAG（Retrieval-Augmented Generation）技术和多 Agent 协作架构，为用户提供准确、快速的设备相关信息查询服务。
+基于 RAG（检索增强生成）与多 Agent 架构的智能家电问答服务，支持设备手册知识检索与 SmartThings 实时数据查询。
+
+## 功能特性
+
+- **智能问答**：支持设备状态、技术参数、操作指导、故障代码等多种意图识别
+- **知识库管理**：PDF/Word/HTML/TXT 文档自动解析与向量化存储
+- **RAG 检索**：语义搜索 + 关键词搜索多路召回，LLM 重排序优化
+- **设备联动**：集成 Samsung SmartThings API，查询设备实时状态
+- **多轮对话**：支持上下文理解与连续对话
 
 ---
 
 ## 快速开始
 
-### 1. 环境准备
+### 环境准备
 
 ```bash
+# 安装虚拟环境
+python3 -m venv venv
+
 # 激活虚拟环境
 source venv/bin/activate
 
-# 安装依赖（已预装）
+# 安装依赖
 pip install -r requirements.txt
 ```
 
-### 2. 配置环境变量
-
-复制配置模板并填写必要参数：
+### 配置环境变量
 
 ```bash
 cp .env.example .env
 ```
 
-编辑 `.env` 文件，至少需要配置 DashScope API 密钥：
+编辑 `.env` 文件，配置 API 密钥：
 
 ```bash
-# LLM 配置（使用阿里通义千问）
-SOS_LLM_MODEL=openai/qwen-turbo
-SOS_LLM_API_KEY=sk-xxxxxxxxxxxx  # 你的 DashScope API Key
-SOS_LLM_BASE_URL=https://dashscope.aliyuncs.com/compatible-mode/v1
+# LLM 配置（阿里通义千问）
+LLM_MODEL=openai/qwen-turbo
+LLM_API_KEY=sk-xxxxxxxxxxxx
+LLM_BASE_URL=https://dashscope.aliyuncs.com/compatible-mode/v1
 
 # Embedding 配置
-SOS_EMBEDDING_MODEL=openai/text-embedding-v3
-SOS_EMBEDDING_API_KEY=sk-xxxxxxxxxxxx  # 同上
-SOS_EMBEDDING_BASE_URL=https://dashscope.aliyuncs.com/compatible-mode/v1
+EMBEDDING_MODEL=openai/text-embedding-v3
+EMBEDDING_API_KEY=sk-xxxxxxxxxxxx
+EMBEDDING_BASE_URL=https://dashscope.aliyuncs.com/compatible-mode/v1
 
 # SmartThings API（可选）
-SOS_SMARTTHINGS_TOKEN=your_pat_token_here
-SOS_SMARTTHINGS_LOCATION_ID=your_location_id
+SMARTTHINGS_TOKEN=your_pat_token_here
+SMARTTHINGS_LOCATION_ID=your_location_id
 ```
 
-### 3. 启动服务
+### 启动服务
 
 ```bash
-# 方法一：使用启动脚本（推荐）
+# 使用启动脚本（推荐）
 ./run.sh
 
-# 方法二：手动启动
-LD_LIBRARY_PATH=/nix/store/03h8f1wmpb86s9v8xd0lcb7jnp7nwm6l-idx-env-fhs/usr/lib:$LD_LIBRARY_PATH \
-  python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+# 或手动启动
+python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
 服务启动后访问：
@@ -59,11 +67,9 @@ LD_LIBRARY_PATH=/nix/store/03h8f1wmpb86s9v8xd0lcb7jnp7nwm6l-idx-env-fhs/usr/lib:
 
 ---
 
-## 核心功能使用
+## 使用指南
 
-### 1. 上传设备说明书
-
-将设备手册（PDF/Word/HTML/TXT）上传到知识库：
+### 上传设备说明书
 
 ```bash
 curl -X POST http://localhost:8000/knowledge/upload \
@@ -71,9 +77,7 @@ curl -X POST http://localhost:8000/knowledge/upload \
   -F "device_type=空调"
 ```
 
-### 2. 智能问答
-
-通过 `/chat/` 接口进行设备相关问答：
+### 智能问答
 
 ```bash
 curl -X POST http://localhost:8000/chat/ \
@@ -85,19 +89,21 @@ curl -X POST http://localhost:8000/chat/ \
 ```
 
 支持的意图类型：
-- 设备状态查询（"空调现在开着吗"）
-- 技术参数查询（"这款冰箱的容量是多少"）
-- 操作步骤指导（"怎么设置定时"）
-- 故障代码解释（"E3是什么故障"）
-- 一般知识问答
+| 意图类型 | 示例 |
+|---------|------|
+| 设备状态查询 | "空调现在开着吗" |
+| 技术参数查询 | "这款冰箱的容量是多少" |
+| 操作步骤指导 | "怎么设置定时" |
+| 故障代码解释 | "E3是什么故障" |
+| 一般知识问答 | "如何清洁滤网" |
 
-### 3. 查询设备实时信息（需配置 SmartThings）
+### 查询设备实时信息
 
 ```bash
 # 获取设备列表
 curl http://localhost:8000/devices/
 
-# 获取特定设备状态
+# 获取设备状态
 curl http://localhost:8000/devices/{device_id}/status
 
 # 获取设备健康状态
@@ -106,127 +112,74 @@ curl http://localhost:8000/devices/{device_id}/health
 
 ---
 
-## 1. 核心组件架构
+## 系统架构
 
-### 1.1 设备知识库构建模块
+![系统架构图](docs/architecture.png)
 
-- **数据采集**：设备说明书
-- **数据处理流程**：
-  1. 文档解析（PDF/Word/HTML）
-  2. 文本清洗和分段
-  3. 向量化处理
-  4. 数据库存储
+### 核心组件
 
-### 1.2 本地 RAG 构建模块
-
-#### 1.2.1 检索优化
-- 多路召回：关键词检索 + 语义检索
-- 重排序：基于相关性评分的重排序
-- 过滤机制：设备类型过滤 + 时效性过滤
-
-#### 1.2.2 生成优化
-- 上下文管理：动态上下文长度调整
-- 后处理：答案格式化 + 可读性优化
-
-### 1.3 主编排 Agent 模块
-
-#### 1.3.1 意图识别
-- 多 Agent 路由策略
-- 优先级调度
-- 负载均衡
-
-#### 1.3.2 结果融合
-- 多源信息整合
-- 冲突解决机制
-
-### 1.4 设备信息 Agent 模块
-
-#### 1.4.1 核心功能
-- 设备状态查询
-- 设备信号识别
-- 技术参数查询
-- 操作步骤指导
-- 故障代码解释
-
-#### 1.4.2 交互设计
-- 多轮对话支持
-- 上下文理解
-- 模糊查询处理
+| 组件 | 说明 |
+|-----|------|
+| **Orchestrator Agent** | 意图识别与请求路由 |
+| **RAG Pipeline** | 多路召回、重排序、答案生成 |
+| **Device Info Agent** | 设备信息查询与 SmartThings 集成 |
+| **ChromaDB** | 向量数据库存储设备知识 |
+| **SmartThings API** | 三星智能家居设备接口 |
 
 ---
 
-## 2. API（示例）
+## 请求处理流程
 
-### 2.1 基本配置
+![流程图](docs/workflow.png)
 
-- **基础 URL**：
-  ```bash
-  BASE_API_URL="https://api.samsungiotcloud.cn"
-  ```
-
-- **认证头部**：
-  ```bash
-  AUTH_HEADER="Authorization: Bearer YOUR_PAT_TKONE"
-  CONTENT_TYPE_HEADER="Content-Type: application/json"
-  ```
-
-### 2.2 设备管理相关 API（示例）
-
-- 获取房间列表
-  ```http
-  GET /locations/YOUR_LOCATION_ID/rooms
-  ```
-
-- 获取设备列表
-  ```http
-  GET /devices?locationId=YOUR_LOCATION_ID
-  ```
-
-- 获取指定设备信息
-  ```http
-  GET /device/YOUR_DEVICE_ID
-  ```
-
-- 获取设备状态
-  ```http
-  GET /devices/YOUR_DEVICE_ID/status
-  ```
-
-- 获取设备健康状态
-  ```http
-  GET /devices/YOUR_DEVICE_ID/health
-  ```
-
-- 获取设备能力信息
-  ```http
-  GET /devices/YOUR_DEVICE_ID/capabilities
-  ```
-
-- 批量查询设备能力
-  ```http
-  POST /capabilities/query
-  Content-Type: application/json
-  
-  {
-    "query": [
-      {
-        "id": "switch",
-        "version": 1
-      },
-      {
-        "id": "switchLevel",
-        "version": 1
-      }
-    ]
-  }
-  ```
+1. **意图识别**：Orchestrator 分析用户查询意图
+2. **知识检索**：RAG Pipeline 执行语义+关键词搜索
+3. **数据融合**：结合知识库与设备实时数据（如需要）
+4. **答案生成**：LLM 生成结构化回答
+5. **响应返回**：返回答案与引用来源
 
 ---
 
-## 3. 核心使用框架
+## 项目结构
 
-- langchain
-- chroma
-- LLM: qwen (via litellm)
-- Embedding: qwen3-embedding
-- python
+```
+app/
+├── main.py              # FastAPI 应用入口
+├── config.py            # 配置管理
+├── models/
+│   └── schemas.py       # 数据模型
+├── routers/
+│   ├── chat.py          # 问答接口
+│   ├── devices.py       # 设备管理接口
+│   └── knowledge.py     # 知识库接口
+├── agents/
+│   ├── orchestrator.py  # 意图识别与路由
+│   └── device_info.py   # 设备信息 Agent
+├── rag/
+│   ├── llm.py           # LLM 封装
+│   ├── retriever.py     # 检索器
+│   ├── reranker.py      # 重排序
+│   └── generator.py     # 答案生成
+├── knowledge/
+│   ├── parser.py        # 文档解析
+│   ├── processor.py     # 文本处理
+│   └── vectorstore.py   # 向量存储
+└── api/
+    └── smartthings.py   # SmartThings API 客户端
+```
+
+---
+
+## 技术栈
+
+- **Web 框架**：FastAPI
+- **LLM**：通义千问（via LiteLLM）
+- **向量数据库**：ChromaDB
+- **文档处理**：LangChain
+- **HTTP 客户端**：httpx
+
+---
+
+## 许可证
+
+[MIT License](LICENSE)

@@ -39,6 +39,12 @@ class DeviceInfoAgent:
         if intent == IntentType.DEVICE_LIST:
             return await self._handle_device_list(query)
 
+        # --- Auto-resolve device_id from device_type if not provided ---
+        if not device_id and device_type:
+            device_id = await self._resolve_device_id(device_type)
+            if device_id:
+                logger.info("Resolved device_id %s from device_type %s", device_id, device_type)
+
         # Build metadata filter for RAG
         where: Optional[dict] = None
         if device_type:
@@ -63,6 +69,42 @@ class DeviceInfoAgent:
             "sources": sources,
             "device_id": device_id,
         }
+
+    async def _resolve_device_id(self, device_type: str) -> Optional[str]:
+        """Find device_id by matching device_type with SmartThings device categories."""
+        try:
+            data = await smartthings.get_devices()
+            items = data.get("items", [])
+
+            # Map Chinese device_type to possible English category names
+            type_mapping = {
+                "空调": ["Air Conditioner", "AirConditioner", "Thermostat"],
+                "冰箱": ["Refrigerator", "Fridge"],
+                "洗衣机": ["Washer", "Washing Machine"],
+                "电视": ["TV", "Television"],
+                "灯": ["Light", "Switch"],
+            }
+            possible_names = type_mapping.get(device_type, [device_type])
+
+            for device in items:
+                components = device.get("components", [])
+                for comp in components:
+                    categories = comp.get("categories", [])
+                    for cat in categories:
+                        cat_name = cat.get("name", "")
+                        for possible in possible_names:
+                            if possible.lower() in cat_name.lower():
+                                return device.get("deviceId")
+
+                # Also check device label/name
+                label = device.get("label") or device.get("name", "")
+                if device_type in label:
+                    return device.get("deviceId")
+
+            return None
+        except Exception:
+            logger.warning("Failed to resolve device_id for %s", device_type, exc_info=True)
+            return None
 
     async def _handle_device_list(self, query: str) -> dict:
         """Fetch all devices and summarize with LLM."""

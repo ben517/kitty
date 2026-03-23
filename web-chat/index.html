@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能家居助手</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <div class="header-main">
+                <h1>智能家居助手</h1>
+                <button id="settings-toggle" class="settings-toggle">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M12 1v6m0 6v6M5.64 5.64l4.24 4.24m4.24 4.24l4.24 4.24M1 12h6m6 0h6M5.64 18.36l4.24-4.24m4.24-4.24l4.24-4.24"></path>
+                    </svg>
+                </button>
+            </div>
+            <p class="subtitle">询问设备状态、操作指南或故障代码</p>
+        </div>
+
+        <div class="settings-panel" id="settings-panel">
+            <div class="setting-item">
+                <label for="api-base">API 地址:</label>
+                <input type="text" id="api-base" value="http://localhost:8000" placeholder="http://localhost:8000">
+            </div>
+            <div class="setting-row">
+                <div class="setting-item">
+                    <label for="device-id">设备 ID (可选):</label>
+                    <input type="text" id="device-id" placeholder="输入设备ID">
+                </div>
+                <div class="setting-item">
+                    <label for="device-type">设备类型 (可选):</label>
+                    <input type="text" id="device-type" placeholder="如: refrigerator, tv">
+                </div>
+            </div>
+            <div class="setting-actions">
+                <button id="clear-history" class="btn-secondary">清空历史</button>
+            </div>
+        </div>
+
+        <div class="chat-messages" id="chat-messages">
+            <div class="message system-message">
+                <div class="message-content">
+                    你好！我是智能家居助手，可以帮你查询设备状态、技术参数、操作指南或故障代码。
+                </div>
+            </div>
+        </div>
+
+        <div class="typing-indicator" id="typing-indicator" style="display: none;">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+
+        <div class="chat-input-container">
+            <div class="input-wrapper">
+                <textarea
+                    id="message-input"
+                    placeholder="输入你的问题..."
+                    rows="1"
+                ></textarea>
+                <button id="send-btn" type="button">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
