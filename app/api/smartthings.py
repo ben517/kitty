@@ -73,16 +73,39 @@ class SmartThingsClient:
         return resp.json()
 
     async def get_device_capabilities(self, device_id: str) -> dict:
-        client = await self._ensure_client()
-        resp = await client.get(f"/devices/{device_id}/capabilities")
-        resp.raise_for_status()
-        return resp.json()
-
-    async def query_capabilities(self, queries: list[dict]) -> dict:
-        client = await self._ensure_client()
-        resp = await client.post("/capabilities/query", json={"query": queries})
-        resp.raise_for_status()
-        return resp.json()
+        """Get device capabilities from the device info endpoint.
+        
+        Note: The dedicated /capabilities endpoint may return 406/401 errors.
+        We extract capabilities from the main device info response instead.
+        """
+        try:
+            # Get full device info which includes capabilities in components
+            device_data = await self.get_device(device_id)
+            
+            # Extract and restructure capabilities for easier consumption
+            result = {
+                "deviceId": device_id,
+                "label": device_data.get("label", ""),
+                "model": device_data.get("model", ""),
+                "manufacturerName": device_data.get("manufacturerName", ""),
+                "components": []
+            }
+            
+            for comp in device_data.get("components", []):
+                comp_info = {
+                    "id": comp.get("id"),
+                    "label": comp.get("label", ""),
+                    "capabilities": [
+                        {"id": cap.get("id"), "version": cap.get("version", "")}
+                        for cap in comp.get("capabilities", [])
+                    ]
+                }
+                result["components"].append(comp_info)
+            
+            return result
+        except Exception as e:
+            logger.error("Failed to get capabilities for %s: %s", device_id, e)
+            raise
 
 
 # Module-level singleton
