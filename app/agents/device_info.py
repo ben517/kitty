@@ -243,9 +243,16 @@ class DeviceInfoAgent:
             
             device_summary = "\n".join(device_lines) if device_lines else "未找到任何设备"
             extra_context = f"当前账号下共有 {len(items)} 台设备：\n{device_summary}"
-        except Exception:
-            logger.warning("Failed to fetch device list", exc_info=True)
-            extra_context = "无法获取设备列表，请检查 SmartThings 配置。"
+        except Exception as e:
+            logger.warning("Failed to fetch device list: %s", e, exc_info=True)
+            error_msg = str(e)
+            if "401" in error_msg or "Unauthorized" in error_msg:
+                extra_context = "无法获取设备列表：SmartThings Token 已过期或无效。请重新生成 Personal Access Token (PAT) 并更新到 .env 文件中。（PAT 有效期为 24 小时）"
+            elif "Event loop is closed" in error_msg or "async" in error_msg.lower():
+                # Async event loop issue - provide user-friendly message
+                extra_context = "无法获取设备列表：当前系统事件循环已关闭。请尝试重新启动服务后再次查询。"
+            else:
+                extra_context = f"无法获取设备列表：{error_msg}"
 
         answer = generate_answer(query, [], extra_context=extra_context)
         return {"answer": answer, "sources": [], "device_id": None}

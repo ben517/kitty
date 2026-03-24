@@ -81,9 +81,9 @@ class OrchestratorAgent:
             intent_result.entities,
         )
 
-        # Determine device_id from request or extracted entities
-        device_id = request.device_id or intent_result.entities.get("device_id")
-        device_type = request.device_type or intent_result.entities.get("device_type")
+        # Extract device_id and device_type from LLM entities only
+        device_id = intent_result.entities.get("device_id")
+        device_type = intent_result.entities.get("device_type")
 
         # --- Route to appropriate agent ---
         if intent_result.intent in (
@@ -117,6 +117,7 @@ class OrchestratorAgent:
             sources=sources,
             device_id=device_id,
             session_id=session_id,
+            intent=intent_result.intent.value,
         )
 
     async def _handle_general_qa(self, query: str, device_type: Optional[str] = None) -> dict:
