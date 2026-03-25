@@ -47,6 +47,13 @@ scenarios:
         entities:
           device_type: 灯
 
+      - id: ds_006
+        description: "查询设备位置"
+        query: "空调在哪个房间？"
+        expected_intent: device_status
+        entities:
+          device_type: 空调
+
   # ========== 设备信号/健康 (Device Signal) ==========
   - category: device_signal
     priority: high
@@ -121,6 +128,20 @@ scenarios:
         query: "哪个厂家生产的？"
         expected_intent: tech_param
         entities: {}
+
+      - id: tp_008
+        description: "查询设备型号"
+        query: "我的空调是什么型号？"
+        expected_intent: tech_param
+        entities:
+          device_type: 空调
+
+      - id: tp_009
+        description: "查询设备能力"
+        query: "我的空调有哪些能力？"
+        expected_intent: tech_param
+        entities:
+          device_type: 空调
 
   # ========== 操作步骤指导 (Operation Guide) ==========
   - category: operation_guide
@@ -234,6 +255,20 @@ scenarios:
         query: "显示所有设备"
         expected_intent: device_list
         entities: {}
+
+      - id: dl_004
+        description: "查询是否有特定类型设备"
+        query: "我名下有空调吗？"
+        expected_intent: device_list
+        entities:
+          device_type: 空调
+
+      - id: dl_005
+        description: "按房间查询设备"
+        query: "我的客厅有哪些设备？"
+        expected_intent: device_list
+        entities:
+          location: 客厅
 
   # ========== 一般知识问答 (General QA) ==========
   - category: general_qa
