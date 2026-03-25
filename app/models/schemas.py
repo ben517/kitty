@@ -12,9 +12,7 @@ from pydantic import BaseModel, Field
 
 class ChatRequest(BaseModel):
     query: str = Field(..., description="用户问题")
-    device_id: Optional[str] = Field(None, description="指定设备ID")
-    device_type: Optional[str] = Field(None, description="设备类型过滤")
-    session_id: Optional[str] = Field(None, description="会话ID，用于多轮对话")
+    session_id: Optional[str] = Field(None, description="会话 ID，用于多轮对话")
 
 
 class ChatResponse(BaseModel):
@@ -22,6 +20,7 @@ class ChatResponse(BaseModel):
     sources: list[str] = Field(default_factory=list, description="引用的知识来源")
     device_id: Optional[str] = None
     session_id: Optional[str] = None
+    intent: Optional[str] = Field(None, description="识别的意图类型")
 
 
 # ---------- Intent ----------

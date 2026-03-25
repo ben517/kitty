@@ -7,3 +7,4 @@ __pycache__/
 .env
 data/
 AGENTS.md
+.pytest_cache/

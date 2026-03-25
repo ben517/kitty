@@ -1,0 +1,382 @@
+# 场景化测试输入文件
+# 包含所有测试场景的定义，按类别分组
+
+metadata:
+  version: "1.0"
+  created: "2026-03-24"
+  description: "智能家居 Q&A 系统场景测试输入"
+
+# 测试场景配置
+scenarios:
+  # ========== 设备状态查询 (Device Status) ==========
+  - category: device_status
+    priority: high
+    scenes:
+      - id: ds_001
+        description: "查询设备开关状态"
+        query: "空调现在开着吗？"
+        expected_intent: device_status
+        entities:
+          device_type: 空调
+
+      - id: ds_002
+        description: "查询设备运行进度"
+        query: "洗衣机运行到哪一步了？"
+        expected_intent: device_status
+        entities:
+          device_type: 洗衣机
+
+      - id: ds_003
+        description: "查询温度设置"
+        query: "冰箱现在的温度是多少度？"
+        expected_intent: device_status
+        entities:
+          device_type: 冰箱
+
+      - id: ds_004
+        description: "查询加热状态"
+        query: "热水器在加热吗？"
+        expected_intent: device_status
+        entities:
+          device_type: 热水器
+
+      - id: ds_005
+        description: "查询灯光状态"
+        query: "灯还亮着吗？"
+        expected_intent: device_status
+        entities:
+          device_type: 灯
+
+      - id: ds_006
+        description: "查询设备位置"
+        query: "空调在哪个房间？"
+        expected_intent: device_status
+        entities:
+          device_type: 空调
+
+  # ========== 设备信号/健康 (Device Signal) ==========
+  - category: device_signal
+    priority: high
+    scenes:
+      - id: dg_001
+        description: "查询设备在线状态"
+        query: "设备是否在线？"
+        expected_intent: device_signal
+        entities: {}
+
+      - id: dg_002
+        description: "查询信号强度"
+        query: "信号强度如何？"
+        expected_intent: device_signal
+        entities: {}
+
+      - id: dg_003
+        description: "查询设备健康度"
+        query: "设备健康状态怎么样？"
+        expected_intent: device_signal
+        entities: {}
+
+      - id: dg_004
+        description: "查询网络连接稳定性"
+        query: "WiFi 连接稳定吗？"
+        expected_intent: device_signal
+        entities: {}
+
+  # ========== 技术参数查询 (Tech Parameters) ==========
+  - category: tech_param
+    priority: high
+    scenes:
+      - id: tp_001
+        description: "查询设备容量"
+        query: "这款冰箱的容量是多少？"
+        expected_intent: tech_param
+        entities:
+          device_type: 冰箱
+
+      - id: tp_002
+        description: "查询功率参数"
+        query: "额定功率是多少瓦？"
+        expected_intent: tech_param
+        entities: {}
+
+      - id: tp_003
+        description: "查询设备功能"
+        query: "有哪些功能？"
+        expected_intent: tech_param
+        entities: {}
+
+      - id: tp_004
+        description: "查询品牌信息"
+        query: "是什么牌子的？"
+        expected_intent: tech_param
+        entities: {}
+
+      - id: tp_005
+        description: "查询运行模式"
+        query: "支持什么模式？"
+        expected_intent: tech_param
+        entities: {}
+
+      - id: tp_006
+        description: "查询技术规格"
+        query: "参数规格是什么？"
+        expected_intent: tech_param
+        entities: {}
+
+      - id: tp_007
+        description: "查询制造商"
+        query: "哪个厂家生产的？"
+        expected_intent: tech_param
+        entities: {}
+
+      - id: tp_008
+        description: "查询设备型号"
+        query: "我的空调是什么型号？"
+        expected_intent: tech_param
+        entities:
+          device_type: 空调
+
+      - id: tp_009
+        description: "查询设备能力"
+        query: "我的空调有哪些能力？"
+        expected_intent: tech_param
+        entities:
+          device_type: 空调
+
+  # ========== 操作步骤指导 (Operation Guide) ==========
+  - category: operation_guide
+    priority: high
+    scenes:
+      - id: og_001
+        description: "询问定时设置方法"
+        query: "怎么设置定时？"
+        expected_intent: operation_guide
+        entities: {}
+
+      - id: og_002
+        description: "询问网络连接方法"
+        query: "如何连接 WiFi？"
+        expected_intent: operation_guide
+        entities: {}
+
+      - id: og_003
+        description: "询问基本使用方法"
+        query: "怎么使用这个设备？"
+        expected_intent: operation_guide
+        entities: {}
+
+      - id: og_004
+        description: "询问重置方法"
+        query: "如何恢复出厂设置？"
+        expected_intent: operation_guide
+        entities: {}
+
+      - id: og_005
+        description: "询问维护方法"
+        query: "怎样清洁滤网？"
+        expected_intent: operation_guide
+        entities: {}
+
+      - id: og_006
+        description: "询问配对方法"
+        query: "怎么配对设备？"
+        expected_intent: operation_guide
+        entities: {}
+
+      - id: og_007
+        description: "询问固件升级"
+        query: "如何升级固件？"
+        expected_intent: operation_guide
+        entities: {}
+
+      - id: og_008
+        description: "询问节能设置"
+        query: "怎么设置省电模式？"
+        expected_intent: operation_guide
+        entities: {}
+
+  # ========== 故障代码解释 (Fault Code) ==========
+  - category: fault_code
+    priority: high
+    scenes:
+      - id: fc_001
+        description: "查询 E3 错误代码"
+        query: "E3 是什么故障？"
+        expected_intent: fault_code
+        entities:
+          error_code: E3
+
+      - id: fc_002
+        description: "查询 F5 错误处理方法"
+        query: "显示 F5 怎么办？"
+        expected_intent: fault_code
+        entities:
+          error_code: F5
+
+      - id: fc_003
+        description: "查询维护提示信息"
+        query: "显示'滤网需要更换'是什么意思？"
+        expected_intent: fault_code
+        entities:
+          message: 滤网需要更换
+
+      - id: fc_004
+        description: "查询 H1 错误解决方法"
+        query: "H1 错误代码怎么解决？"
+        expected_intent: fault_code
+        entities:
+          error_code: H1
+
+      - id: fc_005
+        description: "查询 P0 故障处理"
+        query: "出现 P0 错误怎么处理？"
+        expected_intent: fault_code
+        entities:
+          error_code: P0
+
+  # ========== 设备列表查询 (Device List) ==========
+  - category: device_list
+    priority: medium
+    scenes:
+      - id: dl_001
+        description: "查询所有设备列表"
+        query: "我有哪些设备？"
+        expected_intent: device_list
+        entities: {}
+
+      - id: dl_002
+        description: "查询当前设备"
+        query: "当前有什么设备？"
+        expected_intent: device_list
+        entities: {}
+
+      - id: dl_003
+        description: "显示设备列表指令"
+        query: "显示所有设备"
+        expected_intent: device_list
+        entities: {}
+
+      - id: dl_004
+        description: "查询是否有特定类型设备"
+        query: "我名下有空调吗？"
+        expected_intent: device_list
+        entities:
+          device_type: 空调
+
+      - id: dl_005
+        description: "按房间查询设备"
+        query: "我的客厅有哪些设备？"
+        expected_intent: device_list
+        entities:
+          location: 客厅
+
+  # ========== 一般知识问答 (General QA) ==========
+  - category: general_qa
+    priority: medium
+    scenes:
+      - id: gq_001
+        description: "一般知识问答 - 优势"
+        query: "智能家电有什么好处？"
+        expected_intent: general_qa
+        entities: {}
+
+      - id: gq_002
+        description: "一般知识问答 - 对比"
+        query: "变频空调和定频空调有什么区别？"
+        expected_intent: general_qa
+        entities: {}
+
+      - id: gq_003
+        description: "一般知识问答 - 选购建议"
+        query: "如何选择适合的空气净化器？"
+        expected_intent: general_qa
+        entities: {}
+
+      - id: gq_004
+        description: "一般知识问答 - 原理"
+        query: "热泵热水器的工作原理是什么？"
+        expected_intent: general_qa
+        entities: {}
+
+  # ========== 边界情况 (Edge Cases) ==========
+  - category: edge_case
+    priority: high
+    scenes:
+      - id: ec_001
+        description: "空查询"
+        query: ""
+        expected_intent: null
+        entities: {}
+
+      - id: ec_002
+        description: "无关问题（降级处理）"
+        query: "今天天气怎么样？"
+        expected_intent: general_qa
+        entities: {}
+
+      - id: ec_003
+        description: "特殊字符处理"
+        query: "@#$%设备&*()E3 错误"
+        expected_intent: fault_code
+        entities: {}
+
+      - id: ec_004
+        description: "混合语言处理"
+        query: "How to connect WiFi？我的设备不在线怎么办？"
+        expected_intent: operation_guide
+        entities: {}
+
+  # ========== 多轮对话 (Multi-turn Conversation) ==========
+  - category: multi_turn
+    priority: high
+    scenes:
+      - id: mt_001_turn1
+        description: "多轮对话 - 上下文保持 - 第 1 轮"
+        query: "空调怎么开？"
+        expected_intent: operation_guide
+        entities:
+          device_type: 空调
+        session_id: session_mt_001
+
+      - id: mt_001_turn2
+        description: "多轮对话 - 上下文保持 - 第 2 轮"
+        query: "那制热模式呢？"
+        expected_intent: operation_guide
+        entities:
+          device_type: 空调
+        session_id: session_mt_001
+        depends_on: mt_001_turn1
+
+      - id: mt_002_turn1
+        description: "多轮对话 - 设备指代 - 第 1 轮"
+        query: "客厅的灯怎么控制？"
+        expected_intent: device_status
+        entities:
+          device_type: 灯
+          location: 客厅
+        session_id: session_mt_002
+
+      - id: mt_002_turn2
+        description: "多轮对话 - 设备指代 - 第 2 轮"
+        query: "它的亮度可以调节吗？"
+        expected_intent: device_status
+        entities:
+          device_type: 灯
+        session_id: session_mt_002
+        depends_on: mt_002_turn1
+
+# 执行配置
+execution_config:
+  base_url: "http://localhost:8000"
+  chat_endpoint: "/chat/"
+  timeout_seconds: 300
+  max_concurrent_requests: 1
+  retry_count: 1
+  
+# 输出配置
+output_config:
+  output_dir: "tests/scenarios/output"
+  generate_json: true
+  generate_markdown: true
+  generate_html: false
+  include_detailed_logs: true
