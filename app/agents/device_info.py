@@ -7,7 +7,7 @@ import logging
 import re
 from typing import Optional
 
-from app.api.smartthings import smartthings
+from app.api.smartthings import smartthings, SmartThingsAPIError, RateLimitError, InvalidRequestError, AuthenticationError
 from app.models.schemas import IntentType
 from app.rag.generator import generate_answer
 from app.rag.reranker import rerank
@@ -199,6 +199,18 @@ class DeviceInfoAgent:
                     return device.get("deviceId")
 
             return None
+        except RateLimitError as e:
+            logger.warning("Rate limit exceeded while resolving device_id for %s: %s", device_type, e)
+            return None
+        except InvalidRequestError as e:
+            logger.warning("Invalid request when resolving device_id for %s: %s (likely invalid device name)", device_type, e)
+            return None
+        except AuthenticationError as e:
+            logger.error("Authentication failed when resolving device_id: %s", e)
+            return None
+        except SmartThingsAPIError as e:
+            logger.warning("Failed to resolve device_id for %s: %s", device_type, e)
+            return None
         except Exception:
             logger.warning("Failed to resolve device_id for %s", device_type, exc_info=True)
             return None
@@ -243,6 +255,15 @@ class DeviceInfoAgent:
             
             device_summary = "\n".join(device_lines) if device_lines else "未找到任何设备"
             extra_context = f"当前账号下共有 {len(items)} 台设备：\n{device_summary}"
+        except RateLimitError as e:
+            logger.warning("Rate limit exceeded when fetching device list: %s", e)
+            extra_context = "无法获取设备列表：API 请求过于频繁，请稍后重试。"
+        except AuthenticationError as e:
+            logger.error("Authentication failed when fetching device list: %s", e)
+            extra_context = "无法获取设备列表：SmartThings Token 已过期或无效。请重新生成 Personal Access Token (PAT) 并更新到 .env 文件中。（PAT 有效期为 24 小时）"
+        except SmartThingsAPIError as e:
+            logger.warning("Failed to fetch device list: %s", e)
+            extra_context = f"无法获取设备列表：{e}"
         except Exception as e:
             logger.warning("Failed to fetch device list: %s", e, exc_info=True)
             error_msg = str(e)
@@ -313,6 +334,18 @@ class DeviceInfoAgent:
             
             return "\n".join(context_parts)
 
+        except RateLimitError as e:
+            logger.warning("Rate limit exceeded when fetching device info for %s: %s", device_id, e)
+            return ""
+        except InvalidRequestError as e:
+            logger.warning("Invalid request when fetching device info for %s: %s (device ID may be invalid)", device_id, e)
+            return ""
+        except AuthenticationError as e:
+            logger.error("Authentication failed when fetching device info: %s", e)
+            return ""
+        except SmartThingsAPIError as e:
+            logger.warning("Failed to fetch device info for %s: %s", device_id, e)
+            return ""
         except Exception:
             logger.warning("Failed to fetch device info for %s", device_id, exc_info=True)
             return ""
