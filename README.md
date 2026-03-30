@@ -37,7 +37,7 @@ cp .env.example .env
 
 ```bash
 # LLM 配置（阿里通义千问）
-LLM_MODEL=openai/qwen-turbo
+LLM_MODEL=openai/qwen3-max
 LLM_API_KEY=sk-xxxxxxxxxxxx
 LLM_BASE_URL=https://dashscope.aliyuncs.com/compatible-mode/v1
 
@@ -143,29 +143,46 @@ curl http://localhost:8000/devices/{device_id}/health
 ## 项目结构
 
 ```
-app/
-├── main.py              # FastAPI 应用入口
-├── config.py            # 配置管理
-├── models/
-│   └── schemas.py       # 数据模型
-├── routers/
-│   ├── chat.py          # 问答接口
-│   ├── devices.py       # 设备管理接口
-│   └── knowledge.py     # 知识库接口
-├── agents/
-│   ├── orchestrator.py  # 意图识别与路由
-│   └── device_info.py   # 设备信息 Agent
-├── rag/
-│   ├── llm.py           # LLM 封装
-│   ├── retriever.py     # 检索器
-│   ├── reranker.py      # 重排序
-│   └── generator.py     # 答案生成
-├── knowledge/
-│   ├── parser.py        # 文档解析
-│   ├── processor.py     # 文本处理
-│   └── vectorstore.py   # 向量存储
-└── api/
-    └── smartthings.py   # SmartThings API 客户端
+kitty/
+├── app/
+│   ├── __init__.py
+│   ├── main.py              # FastAPI 应用入口
+│   ├── config.py            # 配置管理
+│   ├── models/
+│   │   ├── __init__.py
+│   │   └── schemas.py       # 数据模型
+│   ├── routers/
+│   │   ├── __init__.py
+│   │   ├── chat.py          # 问答接口
+│   │   ├── devices.py       # 设备管理接口
+│   │   └── knowledge.py     # 知识库接口
+│   ├── agents/
+│   │   ├── __init__.py
+│   │   ├── orchestrator.py  # 意图识别与路由
+│   │   └── device_info.py   # 设备信息 Agent
+│   ├── rag/
+│   │   ├── __init__.py
+│   │   ├── llm.py           # LLM 封装
+│   │   ├── retriever.py     # 检索器
+│   │   ├── reranker.py      # 重排序
+│   │   └── generator.py     # 答案生成
+│   ├── knowledge/
+│   │   ├── __init__.py
+│   │   ├── parser.py        # 文档解析
+│   │   ├── processor.py     # 文本处理
+│   │   └── vectorstore.py   # 向量存储
+│   └── api/
+│       ├── __init__.py
+│       └── smartthings.py   # SmartThings API 客户端
+├── tests/                   # 测试目录
+├── docs/                    # 文档目录
+├── data/                    # 数据目录（向量存储等）
+├── web-chat/                # 前端聊天界面
+├── requirements.txt         # Python 依赖
+├── run.sh                   # 启动脚本
+├── .env.example             # 环境变量示例
+├── AGENTS.md                # Agent 开发指南
+└── README.md                # 项目说明
 ```
 
 ---
@@ -180,6 +197,3 @@ app/
 
 ---
 
-## 许可证
-
-[MIT License](LICENSE)
